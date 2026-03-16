@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat Sécurisé{% endblock %}
+
+{% block content %}
+
+<div class="chat-wrapper">
+
+    <div class="chat-header">
+        <span class="chat-status">● RÉSEAU ACTIF</span>
+        <span class="chat-title">CANAL SÉCURISÉ</span>
+        <a href="#" class="chat-logout">DÉCONNEXION</a>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+
+        <!-- Messages générés par Flask ici -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message-wrapper {% if message.sender_id == current_user %}sent{% else %}received{% endif %}">
+                    <div class="message-bubble">
+                        <span class="message-sender">{{ message.username }}</span>
+                        <p class="message-content">{{ message.content }}</p>
+                        <span class="message-time">{{ message.timestamp }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="chat-empty">
+                <p>— CANAL CHIFFRÉ ACTIF. AUCUN MESSAGE. —</p>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <div class="chat-input-area">
+        <form action="#" method="POST" class="chat-form">
+            <input type="text" name="message" id="message-input" 
+                   placeholder="Tapez votre message chiffré..." 
+                   autocomplete="off" required>
+            <button type="submit" class="btn-send">ENVOYER</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

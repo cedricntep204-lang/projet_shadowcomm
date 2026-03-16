@@ -22,6 +22,9 @@ def register():
 def chat():
     return render_template('chat.html', messages=[], current_user=None)
 
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 
 

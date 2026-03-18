@@ -1,12 +1,33 @@
-from flask import *
-from models.user import *;
+from flask import Flask, render_template
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/projet_shadowcomm_bdd'
-db.init_app(app)
+
 @app.route('/')
-def home():
-    success = Users.create_user("cO3","hello")
-    if success:
-        return render_template("index.html")
-    else:
-        return "Erreur lors de la création."
+def index():
+    return render_template('index.html')
+
+
+
+
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
+
+
+
+
+
+@app.route('/chat')
+def chat():
+    return render_template('chat.html', messages=[], current_user=None)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

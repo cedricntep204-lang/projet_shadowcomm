@@ -15,7 +15,13 @@
             </div>
             <ul class="nav-links">
                 <li><a href="{{ url_for('index') }}">Accueil</a></li>
-                <li><a href="{{ url_for('register') }}">Inscription</a></li>
+                
+                {% if session.get('user_id') %}
+                    <li><a href="{{ url_for('chat')}}">Chat</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('register') }}">Déconnexion</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>

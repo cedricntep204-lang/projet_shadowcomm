@@ -1,11 +1,14 @@
 import datetime
+from abc import *
 from cesar import *
 from flask import *
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import *
 db = SQLAlchemy()
 
-class Message(db.Model):
+class Message(db.Model, ABC):
+    __abstractmethods__ = True
+    
     id = db.Column(db.Integer,primary_key= True)
     contente = db.Column(db.String(255), nullable=False)
     user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

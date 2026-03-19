@@ -20,7 +20,7 @@
         </div>
         {% endif %}
 
-        <form action="#" method="POST">
+        <form action="{{ url_for('register') }}" method="POST">
             <div class="form-group">
                 <label for="username">NOM DE CODE</label>
                 <input type="text" id="username" name="username" placeholder="Choisissez votre nom de code" required>

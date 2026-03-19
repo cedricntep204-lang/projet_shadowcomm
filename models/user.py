@@ -1,10 +1,9 @@
 from flask import *
-from abc import ABC, abstractmethod
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import *
 from flask_bcrypt import *
 db = SQLAlchemy()
-class Users(db.Model, ABC):
-    __abstractmethods__ = True
+bcrypt = Bcrypt()
+class Users(db.Model):
     
     id = db.Column(db.Integer,primary_key= True)
     username = db.Column(db.String(255), nullable=False)
@@ -13,10 +12,12 @@ class Users(db.Model, ABC):
     @staticmethod
     def create_user(name,mdp):
         try:
-            mdp = Bcrypt.generate_password_hash(mdp).decode('utf-8')
+            mdp = bcrypt.generate_password_hash(mdp).decode('utf-8')
             newUser = Users(username=name,password=mdp)
             db.session.add(newUser)
             db.session.commit()
+            session['user_id'] = newUser.id
+            session['username'] = newUser.username
             return True
         except Exception as e:
             db.session.rollback()
@@ -31,7 +32,7 @@ class Users(db.Model, ABC):
             return True
         else:
             return False
-        
+
     def send_msg():
         from message import send
         send()

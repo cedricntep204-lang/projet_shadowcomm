@@ -1,5 +1,5 @@
-def chiffrer_cesar(msg):
-    key =  10
+def chiffrer_cesar(msg, key):
+    key =  key
     resultat = ""
     for c in msg.upper():
         if c.isalpha():

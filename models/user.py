@@ -1,7 +1,6 @@
 from flask import *
-from flask_sqlalchemy import *
 from flask_bcrypt import *
-db = SQLAlchemy()
+from config import db
 bcrypt = Bcrypt()
 class Users(db.Model):
     
@@ -16,26 +15,30 @@ class Users(db.Model):
             newUser = Users(username=name,password=mdp)
             db.session.add(newUser)
             db.session.commit()
-            session['user_id'] = newUser.id
-            session['username'] = newUser.username
+            session['userID'] = newUser.id
             return True
         except Exception as e:
             db.session.rollback()
             print(f"erreur BDD: {e}")
             return False
-        
+
+    @staticmethod
     def log_user(name,mdp):
-        User = Users.query.filter_by(username=name,password=mdp)
+        User = Users.query.filter_by(username=name).first()
         if User and check_password_hash(User.password, mdp):
-            session['user_id'] = User.id
-            session['username'] = User.username
+            session['userID'] = User.id
             return True
         else:
             return False
-
-    def send_msg():
-        from message import send
-        send()
+        
+    @staticmethod
+    def getUser(user_id):
+    # .get() est la méthode la plus rapide pour chercher par l'ID (clé primaire)
+        return Users.query.get(int(user_id))
+    
+    def send_msg(self,msg_content):
+        from models.message import Message
+        return Message.insert_msg_in_bdd(sender_id=self.id,msg=msg_content)
 
     def __repr__(self):
         return f"<User {self.username}"

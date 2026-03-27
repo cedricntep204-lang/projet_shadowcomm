@@ -18,9 +18,9 @@
             {% for message in messages %}
                 <div class="message-wrapper {% if message.sender_id == current_user %}sent{% else %}received{% endif %}">
                     <div class="message-bubble">
-                        <span class="message-sender">{{ message.username }}</span>
-                        <p class="message-content">{{ message.content }}</p>
-                        <span class="message-time">{{ message.timestamp }}</span>
+                        <span class="message-sender">{{ message.author }}</span>
+                        <p class="message-content">{{ message.contente }}</p>
+                        <span class="message-time">{{ message.msg_date_time }}</span>
                     </div>
                 </div>
             {% endfor %}
@@ -33,7 +33,7 @@
     </div>
 
     <div class="chat-input-area">
-        <form action="#" method="POST" class="chat-form">
+        <form action="{{ url_for('chat') }}" method="POST" class="chat-form">
             <input type="text" name="message" id="message-input" 
                    placeholder="Tapez votre message chiffré..." 
                    autocomplete="off" required>

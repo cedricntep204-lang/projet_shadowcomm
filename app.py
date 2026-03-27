@@ -1,5 +1,8 @@
 from flask import *
 from models.user import *
+from config import db
+from models.user import bcrypt
+from models.message import Message
 import re
 
 app = Flask(__name__)
@@ -22,22 +25,36 @@ def register():
         if re.match(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", request.form.get('password')):
             User = Users.create_user(request.form.get('username'),request.form.get('password'))
             if User:
-                return render_template('chat.html')
+                return redirect(url_for('chat'))
             else:
-                return render_template('index.html')
+                return redirect(url_for('index'))
         else:
             return render_template('register.html')
     else:
-        print(session.get("user_id"))
         return render_template('register.html')
     
 @app.route('/login',methods=['GET', 'POST'])
 def login():
-    return ''
+    if request.method == "POST":
+        for key, val in request.form.items():
+            if val == "":
+                return redirect(url_for('index'))
+        if Users.log_user(request.form.get('username'),request.form.get('password')):
+            return redirect(url_for('chat'))
+        else:
+            return redirect(url_for('index'))
+
 
 @app.route('/chat',methods=['GET', 'POST'])
 def chat():
-    return render_template('chat.html', messages=[], current_user=None)
+    if session.get('userID'):
+        current_user = Users.getUser(session.get('userID'))
+        if request.method == "POST" and request.form.get('message') !="":
+            current_user.send_msg(request.form.get('message'))
+
+        return render_template('chat.html', messages=Message.GetAllmsg(), current_user=None)
+    else:
+        return redirect(url_for('index'))
 
 @app.route('/logout')
 def logout():

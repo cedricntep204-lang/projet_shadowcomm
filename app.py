@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+        return render_template('register.html')
 
 
 
@@ -12,7 +12,7 @@ def index():
 
 @app.route('/register')
 def register():
-    return render_template('register.html')
+    return render_template('register.html', messages=[], current_user=None)
 
 
 

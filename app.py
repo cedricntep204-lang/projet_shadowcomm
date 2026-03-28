@@ -61,8 +61,18 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/delete', methods=['POST'])
+def delete():
+    if session.get('userID'):
+        user = Users.getUser(session.get('userID'))
+        if user:
+            Message.query.filter_by(user=user.id).delete()
+            db.session.delete(user)
+            db.session.commit()
+            session.clear()
+    return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
+

@@ -19,7 +19,7 @@ class Message(db.Model):
     def insert_msg_in_bdd(sender_id,msg):
         try:
             new_msg = Message(
-                contente = chiffrer_cesar(msg,3),
+                contente = chiffrer_cesar(msg,10),
                 user = sender_id,
                 msg_date_time = datetime.datetime.now()
             )
@@ -31,14 +31,17 @@ class Message(db.Model):
             print(f"ERREUR BDD MESSAGE: {e}")
             return False,
 
+    @staticmethod
     def GetAllmsg():
-        try:
-            allmsg = Message.query.order_by(Message.msg_date_time.asc())
-            for i in allmsg:
-                contente = i.contente
-                i.contente = dechiffrer_cesar(contente)
-            return allmsg
-        except Exception as e:
-            db.session.rollback()
-            print(f"ERREUR BDD MESSAGE: {e}")
-            return False,
+            try:
+                from models.user import Users
+                allmsg = Message.query.order_by(Message.msg_date_time.asc()).all()
+                for i in allmsg:
+                    i.contente = dechiffrer_cesar(i.contente)
+                    user = Users.query.get(i.user)
+                    i.username = user.username if user else "Inconnu"
+                return allmsg
+            except Exception as e:
+                db.session.rollback()
+                print(f"ERREUR BDD MESSAGE: {e}")
+                return []

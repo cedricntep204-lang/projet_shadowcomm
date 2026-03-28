@@ -16,9 +16,9 @@
         <!-- Messages générés par Flask ici -->
         {% if messages %}
             {% for message in messages %}
-                <div class="message-wrapper {% if message.sender_id == current_user %}sent{% else %}received{% endif %}">
+                <div class="message-wrapper {% if session.get('userID') and message.user == session.get('userID') %}sent{% else %}received{% endif %}">
                     <div class="message-bubble">
-                        <span class="message-sender">{{ message.author }}</span>
+                       <span class="message-sender">{{ message.username }}</span>
                         <p class="message-content">{{ message.contente }}</p>
                         <span class="message-time">{{ message.msg_date_time }}</span>
                     </div>
@@ -41,6 +41,12 @@
         </form>
     </div>
 
+</div>
+
+<div class="delete-section">
+    <form action="{{ url_for('delete') }}" method="POST">
+        <button type="submit" class="btn-delete" onclick="return confirm('Confirmer la suppression de votre compte et tous vos messages ?')">SUPPRIMER MON COMPTE</button>
+    </form>
 </div>
 
 {% endblock %}

@@ -6,7 +6,7 @@ from models.message import Message
 import re
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/projet_shadowcomm_bdd'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 bcrypt.init_app(app)
@@ -21,15 +21,18 @@ def register():
     if request.method == "POST":
         for key, val in request.form.items():
             if val == "":
-                return render_template('register.html',error="aucun champ ne doit être vide")
+                flash("aucun champ ne doit être vide",'error')
+                return render_template('register.html')
         if re.match(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", request.form.get('password')):
             User = Users.create_user(request.form.get('username'),request.form.get('password'))
             if User:
                 return redirect(url_for('chat'))
             else:
-                return redirect(url_for('index'),error="error l'ore de la création de l'utilisateur en bdd")
+                flash("error l'ore de la création de l'utilisateur en bdd non de code déjat utiliser","error")
+                return render_template('register.html')
         else:
-            return render_template('register.html',error="le mot de passe ne correspont pas au critére qui demander il faut aumoin 8 car. min, 1 maj, 1 chiffre, 1 cart.spécial (@$!%*?&)")
+            flash("le mot de passe ne correspont pas au critére qui demander il faut aumoin 8 car. min, 1 maj, 1 chiffre, 1 cart.spécial (@$!%*?&)","error")
+            return render_template('register.html')
     else:
         return render_template('register.html')
     
@@ -38,11 +41,13 @@ def login():
     if request.method == "POST":
         for key, val in request.form.items():
             if val == "":
-                return redirect(url_for('index'),error="aucun champ ne doit être vide")
+                flash("aucun champ ne doit être vide","error")
+                return redirect(url_for('index'),)
         if Users.log_user(request.form.get('username'),request.form.get('password')):
             return redirect(url_for('chat'))
         else:
-            return redirect(url_for('index'),error="mot de passe ou nom de code incorecte")
+            flash("mot de passe ou nom de code incorecte","error")
+            return redirect(url_for('index'))
 
 
 @app.route('/chat',methods=['GET', 'POST'])
@@ -65,9 +70,16 @@ def logout():
 def delete():
     if session.get('userID'):
         user = Users.getUser(session.get('userID'))
-        if user:
-            user.deleateUser()
-    return redirect(url_for('index'),error="impsible de suprimer l'utilisateur")
+        if user and user.deleateUser():
+            session.clear()
+            flash("les info de l'agent on bient été suprimer","success")
+            return redirect(url_for('index'))
+        else:
+            flash("aucun agent enregister sous se non de code","error")
+            return redirect(url_for('index'))
+    else:
+        flash("aucun agent n'est actuement connecter ","error")
+        return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

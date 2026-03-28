@@ -10,13 +10,18 @@ class Users(db.Model):
 
     @staticmethod
     def create_user(name,mdp):
+        
         try:
-            mdp = bcrypt.generate_password_hash(mdp).decode('utf-8')
-            newUser = Users(username=name,password=mdp)
-            db.session.add(newUser)
-            db.session.commit()
-            session['userID'] = newUser.id
-            return True
+            user = Users.query.filter_by(username=name).first()
+            if user:
+                return False
+            else:
+                mdp = bcrypt.generate_password_hash(mdp).decode('utf-8')
+                newUser = Users(username=name,password=mdp)
+                db.session.add(newUser)
+                db.session.commit()
+                session['userID'] = newUser.id
+                return True
         except Exception as e:
             db.session.rollback()
             print(f"erreur BDD: {e}")
@@ -38,8 +43,7 @@ class Users(db.Model):
     
     def deleateUser(self):
         try:
-            Users.query.filter_by(user=self.id).delete()
-            db.session.delete("userID")
+            db.session.delete(self)
             db.session.commit()
             session.clear()
             return True

@@ -8,17 +8,16 @@
     <div class="login-container">
         <h2 class="login-title">NOUVEL AGENT</h2>
 
-        {% if error %}
-        <div class="error-message">
-            {{ error }}
-        </div>
-        {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ category }}-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-        {% if success %}
-        <div class="success-message">
-            {{ success }}
-        </div>
-        {% endif %}
 
         <form action="{{ url_for('register') }}" method="POST">
             <div class="form-group">

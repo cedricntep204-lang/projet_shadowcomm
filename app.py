@@ -6,7 +6,7 @@ from models.message import Message
 import re
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/projet_shadowcomm_bdd'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 bcrypt.init_app(app)
@@ -14,7 +14,7 @@ app.secret_key = 'e48a1b63d9196b0559f63564757e750697554f653457a419266736283c7482
 
 @app.route('/')
 def index():
-        return render_template('register.html')
+        return render_template('index.html')
 
 @app.route('/register',methods=['GET', 'POST'])
 def register():

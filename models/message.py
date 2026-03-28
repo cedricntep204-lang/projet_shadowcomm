@@ -19,7 +19,7 @@ class Message(db.Model):
     def insert_msg_in_bdd(sender_id,msg):
         try:
             new_msg = Message(
-                contente = chiffrer_cesar(msg,10),
+                contente = chiffrer_cesar(msg,3),
                 user = sender_id,
                 msg_date_time = datetime.datetime.now()
             )

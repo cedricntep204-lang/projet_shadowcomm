@@ -36,6 +36,19 @@ class Users(db.Model):
     # .get() est la méthode la plus rapide pour chercher par l'ID (clé primaire)
         return Users.query.get(int(user_id))
     
+    def deleateUser(self):
+        try:
+            Users.query.filter_by(user=self.id).delete()
+            db.session.delete("userID")
+            db.session.commit()
+            session.clear()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"erreur BDD: {e}")
+            return False
+
+    
     def send_msg(self,msg_content):
         from models.message import Message
         return Message.insert_msg_in_bdd(sender_id=self.id,msg=msg_content)

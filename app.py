@@ -21,15 +21,15 @@ def register():
     if request.method == "POST":
         for key, val in request.form.items():
             if val == "":
-                return render_template('register.html')
+                return render_template('register.html',error="aucun champ ne doit être vide")
         if re.match(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", request.form.get('password')):
             User = Users.create_user(request.form.get('username'),request.form.get('password'))
             if User:
                 return redirect(url_for('chat'))
             else:
-                return redirect(url_for('index'))
+                return redirect(url_for('index'),error="error l'ore de la création de l'utilisateur en bdd")
         else:
-            return render_template('register.html')
+            return render_template('register.html',error="le mot de passe ne correspont pas au critére qui demander il faut aumoin 8 car. min, 1 maj, 1 chiffre, 1 cart.spécial (@$!%*?&)")
     else:
         return render_template('register.html')
     
@@ -38,11 +38,11 @@ def login():
     if request.method == "POST":
         for key, val in request.form.items():
             if val == "":
-                return redirect(url_for('index'))
+                return redirect(url_for('index'),error="aucun champ ne doit être vide")
         if Users.log_user(request.form.get('username'),request.form.get('password')):
             return redirect(url_for('chat'))
         else:
-            return redirect(url_for('index'))
+            return redirect(url_for('index'),error="mot de passe ou nom de code incorecte")
 
 
 @app.route('/chat',methods=['GET', 'POST'])
@@ -66,11 +66,8 @@ def delete():
     if session.get('userID'):
         user = Users.getUser(session.get('userID'))
         if user:
-            Message.query.filter_by(user=user.id).delete()
-            db.session.delete(user)
-            db.session.commit()
-            session.clear()
-    return redirect(url_for('index'))
+            user.deleateUser()
+    return redirect(url_for('index'),error="impsible de suprimer l'utilisateur")
 
 
 if __name__ == '__main__':
